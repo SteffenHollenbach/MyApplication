@@ -16,6 +16,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".MyService">
+            <intent-filter>
+                <action android:name="de.whatthedroid.startedservices.MyService">
+                </action>
+            </intent-filter>
+        </service>
+
+
+        <receiver android:name=".AlarmReceiver"></receiver>
+
     </application>
+
 
 </manifest>
