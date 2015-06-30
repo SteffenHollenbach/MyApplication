@@ -52,7 +52,7 @@ public class MyService extends Service {
 
     private void updateNotification(String message) {
         if (firstTime) {
-            mBuilder.setSmallIcon(R.drawable.cat)
+            mBuilder.setSmallIcon(R.drawable.dryer)
                     .setContentTitle("My Notification")
                     .setOnlyAlertOnce(true);
             firstTime = false;

@@ -1,5 +1,6 @@
 package com.example.steffen.myapplication;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -49,34 +50,20 @@ public class MainActivity extends ActionBarActivity {
         rate = (RatingBar) findViewById(R.id.ratingBar);
 
         timer.setText(timeSec + ":000");
+        createThread();
+
+        if (isMyServiceRunning(MyService.class)){
+            Log.e("WhatTheDroidService", "Service gefunden");
+            startThread();
+        } else {
+            Log.e("WhatTheDroidService", "Service nicht gefunden");
+        };
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 startService(new Intent(context,MyService.class));
-
-                t = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            while (!isInterrupted()) {
-                                Thread.sleep(500);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            timer.setText(MyService.getCountLive()+"");
-                                            rate.setRating(MyService.getCountLive()%5);
-                                        } catch (Exception e) {}
-
-                                    }
-                                });
-                            }
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                };
-                t.start();
+                startThread();
             }
         });
 
@@ -91,6 +78,44 @@ public class MainActivity extends ActionBarActivity {
 
 
 
+    }
+
+    public void startThread(){
+        t.start();
+    }
+
+    public void createThread() {
+        t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(500);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    timer.setText(MyService.getCountLive()+"");
+                                    rate.setRating(MyService.getCountLive()%5);
+                                } catch (Exception e) {}
+
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
