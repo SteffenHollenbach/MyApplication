@@ -37,4 +37,17 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="70dp" />
 
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_below="@+id/ratingBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:progress="0"
+        android:max="100"
+        android:indeterminate="false"/>
+
 </RelativeLayout>

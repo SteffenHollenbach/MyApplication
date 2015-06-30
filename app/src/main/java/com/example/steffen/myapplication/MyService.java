@@ -25,7 +25,11 @@ import java.util.TimerTask;
  */
 public class MyService extends Service {
 
-    public static Long counter;
+    public static int int_feed;
+    public static int int_thirst;
+    public static int int_fun;
+
+
     private NotificationManager nm;
     private Timer timer = new Timer();
     private final Calendar time = Calendar.getInstance();
@@ -40,10 +44,10 @@ public class MyService extends Service {
 
         prefs = this.getSharedPreferences("com.example.app", Context.MODE_PRIVATE);
 
-        counter = getCount();
+        loadStats();
         nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         Toast.makeText(this, "Service created at " + time.getTime(), Toast.LENGTH_LONG).show();
-        updateNotification("Start");
+        //updateNotification("My Cat");
         incrementCounter();
     }
 
@@ -53,7 +57,7 @@ public class MyService extends Service {
     private void updateNotification(String message) {
         if (firstTime) {
             mBuilder.setSmallIcon(R.drawable.dryer)
-                    .setContentTitle("My Notification")
+                    .setContentTitle("My Cat")
                     .setOnlyAlertOnce(true);
             firstTime = false;
         }
@@ -71,16 +75,31 @@ public class MyService extends Service {
                 @Override
                 public void dispatchMessage(Message msg) {
                     super.dispatchMessage(msg);
-                    if (counter % 10 == 0) {
-                        Toast.makeText(getApplicationContext(), "Weitere 10 geschafft; counter is at: " + counter, Toast.LENGTH_LONG).show();
-                    };
+
                 }
             };
 
             public void run() {
-                counter++;
+                if (int_feed > 0) {int_feed--;}
+                if (int_thirst > 0) {int_thirst--;}
+                if (int_fun > 0) {int_fun--;}
                 //MainActivity.timer.setText(counter+"");
-                updateNotification("Counter: " + counter);
+                if (int_feed < 30 || int_thirst < 30 || int_fun < 30) {
+                    if (int_feed + int_thirst + int_fun < 159) {
+                        updateNotification("Deiner Katze fehlt einiges.");
+                    } else {
+
+                        if (int_feed < 30) {
+                            updateNotification("Deine Katze ist hungrig.");
+                        } else if (int_thirst < 30) {
+                            updateNotification("Deine Katze ist durstig.");
+                        } else if (int_fun < 30) {
+                            updateNotification("Deiner Katze ist langweilig.");
+                        }
+                    }
+                } else {
+                    nm.cancel(1);
+                }
 
                 try {
 
@@ -110,10 +129,10 @@ public class MyService extends Service {
                 + ": WhatTheDroidService zerstoert.");
 
         shutdownCounter();
-        clearCount();
+        clearStats();
         nm.cancel(1);
-        Toast.makeText(this, "Service destroyed at " + time.getTime() + "; counter is at: " + counter, Toast.LENGTH_LONG).show();
-        counter=null;
+        Toast.makeText(this, "Service destroyed at " + time.getTime(), Toast.LENGTH_LONG).show();
+        //counter=null;
 
     }
 
@@ -129,19 +148,47 @@ public class MyService extends Service {
         return null;
     }
 
-    public static void safeCount(){
-        prefs.edit().putLong("COUNTER_KEY", counter).apply();
+    public static void safeStats(){
+        prefs.edit().putInt("FEED_KEY", int_feed).apply();
+        prefs.edit().putInt("THIRST_KEY", int_thirst).apply();
+        prefs.edit().putInt("FUN_KEY", int_fun).apply();
     }
 
-    public static void clearCount(){
-        prefs.edit().putLong("COUNTER_KEY", 0).apply();
+    public static void clearStats(){
+        prefs.edit().putInt("FEED_KEY", 50).apply();
+        prefs.edit().putInt("THIRST_KEY", 50).apply();
+        prefs.edit().putInt("FUN_KEY", 50).apply();
     }
 
-    public static long getCount(){
-        return prefs.getLong("COUNTER_KEY", 0);
+    public static void loadStats(){
+        int_feed = prefs.getInt("FEED_KEY", 50);
+        int_thirst = prefs.getInt("THIRST_KEY", 50);
+        int_fun = prefs.getInt("FUN_KEY", 50);
     }
 
-    public static long getCountLive(){
-        return counter;
+    public static int getInt_feed() {
+        return int_feed;
     }
+
+    public static int getInt_thirst() {
+        return int_thirst;
+    }
+
+    public static int getInt_fun() {
+        return int_fun;
+    }
+
+
+    public static void setInt_feed(int int_feed) {
+        MyService.int_feed = MyService.int_feed + int_feed;
+    }
+
+    public static void setInt_thirst(int int_thirst) {
+        MyService.int_thirst = MyService.int_thirst + int_thirst;
+    }
+
+    public static void setInt_fun(int int_fun) {
+        MyService.int_fun = MyService.int_fun + int_fun;
+    }
+
 }

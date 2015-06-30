@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +27,9 @@ public class MainActivity extends ActionBarActivity {
 
     public static Context context;
 
-    public static TextView timer;
-    public static RatingBar rate;
-    Button start, stop;
+    public static TextView textView_feed, textView_feed_percent, textView_thirst, textView_thirst_percent, textView_fun, textView_fun_percent, textView_mood;
+    SeekBar seekbar_feed, seekbar_thirst, seekbar_fun;
+    Button button_feed, button_thirst, button_fun;
     public static int timeSec = 0;
 
     private PendingIntent pendingIntent;
@@ -41,15 +43,46 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.layout_manin_animal);
 
         context = this;
-        timer = (TextView) findViewById(R.id.timerValue);
-        start = (Button) findViewById(R.id.startButton);
-        stop = (Button) findViewById(R.id.pauseButton);
-        rate = (RatingBar) findViewById(R.id.ratingBar);
+        textView_feed = (TextView) findViewById(R.id.textView_feed);
+        textView_feed_percent = (TextView) findViewById(R.id.textView_feed_percent);
+        textView_thirst = (TextView) findViewById(R.id.textView_thirst);
+        textView_thirst_percent = (TextView) findViewById(R.id.textView_thirst_percent);
+        textView_fun = (TextView) findViewById(R.id.textView_fun);
+        textView_fun_percent = (TextView) findViewById(R.id.textView_fun_percent);
+        textView_mood = (TextView) findViewById(R.id.textView_mood);
 
-        timer.setText(timeSec + ":000");
+        button_feed = (Button) findViewById(R.id.button_feed);
+        button_thirst = (Button) findViewById(R.id.button_thirst);
+        button_fun = (Button) findViewById(R.id.button_fun);
+
+        seekbar_feed = (SeekBar) findViewById(R.id.seekBar_feed);
+        seekbar_thirst = (SeekBar) findViewById(R.id.seekBar_thirst);
+        seekbar_fun= (SeekBar) findViewById(R.id.seekBar_fun);
+
+        seekbar_feed.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+
+        seekbar_thirst.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+
+        seekbar_fun.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+
         createThread();
 
         if (isMyServiceRunning(MyService.class)){
@@ -57,21 +90,30 @@ public class MainActivity extends ActionBarActivity {
             startThread();
         } else {
             Log.e("WhatTheDroidService", "Service nicht gefunden");
+            startService(new Intent(context, MyService.class));
+            if (!t.isAlive()){
+                startThread();
+            }
         };
 
-        start.setOnClickListener(new View.OnClickListener() {
+        button_feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                startService(new Intent(context,MyService.class));
-                startThread();
+                MyService.setInt_feed(10);
             }
         });
 
-        stop.setOnClickListener(new View.OnClickListener() {
+        button_thirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                stopService(new Intent(context,MyService.class));
-                //t = null;
+                MyService.setInt_thirst(10);
+            }
+        });
+
+        button_fun.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                MyService.setInt_fun(10);
             }
         });
 
@@ -95,8 +137,12 @@ public class MainActivity extends ActionBarActivity {
                             @Override
                             public void run() {
                                 try {
-                                    timer.setText(MyService.getCountLive()+"");
-                                    rate.setRating(MyService.getCountLive()%5);
+                                    textView_feed_percent.setText(MyService.getInt_feed()+"");
+                                    seekbar_feed.setProgress(Integer.parseInt(MyService.getInt_feed()+""));
+                                    textView_thirst_percent.setText(MyService.getInt_thirst()+"");
+                                    seekbar_thirst.setProgress(Integer.parseInt(MyService.getInt_thirst()+""));
+                                    textView_fun_percent.setText(MyService.getInt_fun()+"");
+                                    seekbar_fun.setProgress(Integer.parseInt(MyService.getInt_fun()+""));
                                 } catch (Exception e) {}
 
                             }
@@ -121,13 +167,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();  // Always call the superclass method first
-        MyService.safeCount();
+        MyService.safeStats();
     }
 
     @Override
     protected void onDestroy() {
         super.onStop();  // Always call the superclass method first
-        MyService.safeCount();
+        MyService.safeStats();
     }
 
 
