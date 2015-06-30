@@ -36,11 +36,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="0"
+        android:text="50"
         android:id="@+id/textView_feed_percent"
         android:layout_alignTop="@+id/textView_feed"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignRight="@+id/seekBar_feed"
+        android:layout_alignEnd="@+id/seekBar_feed" />
 
     <SeekBar
         android:layout_width="wrap_content"
@@ -122,17 +122,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="0"
+        android:text="50"
         android:id="@+id/textView_thirst_percent"
-        android:layout_alignBottom="@+id/textView_thirst"
-        android:layout_toLeftOf="@+id/textView_feed_percent"
-        android:layout_toStartOf="@+id/textView_feed_percent" />
+        android:layout_alignTop="@+id/textView_thirst"
+        android:layout_alignRight="@+id/seekBar_thirst"
+        android:layout_alignEnd="@+id/seekBar_thirst" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="100"
+        android:text="50"
         android:id="@+id/textView_fun_percent"
         android:layout_alignTop="@+id/textView_fun"
         android:layout_alignRight="@+id/textView_feed_percent"

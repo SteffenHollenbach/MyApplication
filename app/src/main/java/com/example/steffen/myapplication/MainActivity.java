@@ -31,14 +31,13 @@ public class MainActivity extends ActionBarActivity {
     SeekBar seekbar_feed, seekbar_thirst, seekbar_fun;
     Button button_feed, button_thirst, button_fun;
     public static int timeSec = 0;
+    public static int maxValue = 1000;
 
     private PendingIntent pendingIntent;
     private AlarmManager manager;
 
     Handler mHandler;
     Thread t;
-
-    //ToDo prüfen ob Service läuft -> Wert abholen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,24 +95,29 @@ public class MainActivity extends ActionBarActivity {
             }
         };
 
+        final int addValue = maxValue / 10;
+
         button_feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                MyService.setInt_feed(10);
+                MyService.setInt_feed(addValue);
+                refreshStatsGUI();
             }
         });
 
         button_thirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                MyService.setInt_thirst(10);
+                MyService.setInt_thirst(addValue);
+                refreshStatsGUI();
             }
         });
 
         button_fun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                MyService.setInt_fun(10);
+                MyService.setInt_fun(addValue);
+                refreshStatsGUI();
             }
         });
 
@@ -121,6 +125,18 @@ public class MainActivity extends ActionBarActivity {
 
 
     }
+
+    public void refreshStatsGUI(){
+        try {
+            textView_feed_percent.setText(MyService.getInt_feed()+"");
+            seekbar_feed.setProgress(Integer.parseInt(MyService.getInt_feed()+""));
+            textView_thirst_percent.setText(MyService.getInt_thirst()+"");
+            seekbar_thirst.setProgress(Integer.parseInt(MyService.getInt_thirst()+""));
+            textView_fun_percent.setText(MyService.getInt_fun()+"");
+            seekbar_fun.setProgress(Integer.parseInt(MyService.getInt_fun()+""));
+        } catch (Exception e) {}
+    }
+
 
     public void startThread(){
         t.start();
@@ -132,7 +148,7 @@ public class MainActivity extends ActionBarActivity {
             public void run() {
                 try {
                     while (!isInterrupted()) {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
