@@ -6,24 +6,25 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
-import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    // Declaring our tabs and the corresponding fragments.
+    ActionBar.Tab OverviewTabX, WorkTabX, StoreTabX;
+    Fragment OverviewFragmentTab = new OverviewTab();
+    Fragment WorkFragmentTab = new WorkTab();
+    Fragment StoreFragmentTab = new StoreTab();
+
+
 
     public static Context context;
 
@@ -44,7 +45,54 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_manin_animal);
 
+
+        // Asking for the default ActionBar element that our platform supports.
+        ActionBar actionBar = getSupportActionBar();
+
+        // Screen handling while hiding ActionBar icon.
+        actionBar.setDisplayShowHomeEnabled(false);
+
+        // Screen handling while hiding Actionbar title.
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        // Creating ActionBar tabs.
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // Setting custom tab icons.
+        OverviewTabX = actionBar.newTab().setText("Übersicht");
+        WorkTabX = actionBar.newTab().setText("Arbeit");
+        StoreTabX = actionBar.newTab().setText("Kaufen");
+
+
+        // Setting tab listeners.
+        OverviewTabX.setTabListener(new TabListener(OverviewFragmentTab));
+        WorkTabX.setTabListener(new TabListener(WorkFragmentTab));
+        StoreTabX.setTabListener(new TabListener(StoreFragmentTab));
+
+        // Adding tabs to the ActionBar.
+        actionBar.addTab(OverviewTabX);
+        actionBar.addTab(WorkTabX);
+        actionBar.addTab(StoreTabX);
+
         context = this;
+
+        createThread();
+
+        if (isMyServiceRunning(MyService.class)){
+            Log.e("WhatTheDroidService", "Service gefunden");
+            startThread();
+        } else {
+            Log.e("WhatTheDroidService", "Service nicht gefunden");
+            startService(new Intent(context, MyService.class));
+            if (!t.isAlive()){
+                startThread();
+            }
+        };
+
+        final int addValue = maxValue / 10;
+
+
+        /*
         textView_feed = (TextView) findViewById(R.id.textView_feed);
         textView_feed_percent = (TextView) findViewById(R.id.textView_feed_percent);
         textView_thirst = (TextView) findViewById(R.id.textView_thirst);
@@ -82,20 +130,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        createThread();
 
-        if (isMyServiceRunning(MyService.class)){
-            Log.e("WhatTheDroidService", "Service gefunden");
-            startThread();
-        } else {
-            Log.e("WhatTheDroidService", "Service nicht gefunden");
-            startService(new Intent(context, MyService.class));
-            if (!t.isAlive()){
-                startThread();
-            }
-        };
-
-        final int addValue = maxValue / 10;
 
         button_feed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,11 +157,11 @@ public class MainActivity extends ActionBarActivity {
         });
 
 
-
+        */
 
     }
 
-    public void refreshStatsGUI(){
+   /* public void refreshStatsGUI(){
         try {
             textView_feed_percent.setText(MyService.getInt_feed()+"");
             seekbar_feed.setProgress(Integer.parseInt(MyService.getInt_feed()+""));
@@ -135,7 +170,7 @@ public class MainActivity extends ActionBarActivity {
             textView_fun_percent.setText(MyService.getInt_fun()+"");
             seekbar_fun.setProgress(Integer.parseInt(MyService.getInt_fun()+""));
         } catch (Exception e) {}
-    }
+    }*/
 
 
     public void startThread(){
@@ -153,12 +188,12 @@ public class MainActivity extends ActionBarActivity {
                             @Override
                             public void run() {
                                 try {
-                                    textView_feed_percent.setText(MyService.getInt_feed()+"");
-                                    seekbar_feed.setProgress(Integer.parseInt(MyService.getInt_feed()+""));
-                                    textView_thirst_percent.setText(MyService.getInt_thirst()+"");
-                                    seekbar_thirst.setProgress(Integer.parseInt(MyService.getInt_thirst()+""));
-                                    textView_fun_percent.setText(MyService.getInt_fun()+"");
-                                    seekbar_fun.setProgress(Integer.parseInt(MyService.getInt_fun()+""));
+                                    OverviewTab.textView_feed_percent.setText(MyService.getInt_feed() + "");
+                                    OverviewTab.seekbar_feed.setProgress(Integer.parseInt(MyService.getInt_feed()+""));
+                                    OverviewTab.textView_thirst_percent.setText(MyService.getInt_thirst()+"");
+                                    OverviewTab.seekbar_thirst.setProgress(Integer.parseInt(MyService.getInt_thirst()+""));
+                                    OverviewTab.textView_fun_percent.setText(MyService.getInt_fun()+"");
+                                    OverviewTab.seekbar_fun.setProgress(Integer.parseInt(MyService.getInt_fun()+""));
                                 } catch (Exception e) {}
 
                             }
@@ -194,7 +229,7 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-
+    /*
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -216,5 +251,5 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    } */
 }

@@ -31,7 +31,7 @@ public class MyService extends Service {
     public static int int_thirst;
     public static int int_fun;
 
-    public static int maxValue = MainActivity.maxValue;
+    public static int maxValue = OverviewTab.maxValue;
 
     private NotificationManager nm;
     private Timer timer = new Timer();
@@ -118,11 +118,11 @@ public class MyService extends Service {
 
                 int critical = maxValue/10*3;
 
-                if (int_feed > 0) {int_feed = int_feed - 2;}
+                if (int_feed > 0) {int_feed = int_feed - 20;}
                 if (int_feed < 0) {int_feed = 0;}
                 if (int_thirst > 0) {int_thirst = int_thirst -30;} //ACHTUNG ************************************************ -3
                 if (int_thirst < 0) {int_thirst = 0;}
-                if (int_fun > 0) {int_fun = int_fun -1;}
+                if (int_fun > 0) {int_fun = int_fun -10;}
                 if (int_fun < 0) {int_fun = 0;}
 
                 if (int_feed < critical || int_thirst < critical || int_fun < critical) {
