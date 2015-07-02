@@ -36,7 +36,6 @@ public class MyService extends Service {
     private NotificationManager nm;
     private Timer timer = new Timer();
     private final Calendar time = Calendar.getInstance();
-    Notification notification;
     static SharedPreferences prefs;
 
     static Context c;
